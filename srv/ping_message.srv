@@ -1,0 +1,9 @@
+uint8 type
+uint16 code
+uint64 excess
+uint64 checksum
+---
+uint8 type
+uint16 code
+uint64 excess
+uint64 checksum

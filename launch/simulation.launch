@@ -1,0 +1,6 @@
+<launch>
+  <group ns="controller1">
+    <node pkg="kermit" name="Camera" type="camera"/>
+    <node pkg="kermit" name="Kernel" type="kernel"/>
+  </group>
+</launch>
