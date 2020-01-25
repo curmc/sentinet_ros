@@ -1,12 +1,12 @@
 /**
- * @author      : theo (theo.j.lincke@gmail.com)
- * @file        : LocalizerFilter
- * @brief       : A brief description of the file
+ * @author                        : theo (theo.j.lincke@gmail.com)
+ * @file                                : LocalizerFilter
+ * @brief                         : A brief description of the file
  *
  * A detailed description of the file
  *
- * @created     : Tuesday Jan 07, 2020 15:54:16 MST
- * @license     : MIT
+ * @created                 : Tuesday Jan 07, 2020 15:54:16 MST
+ * @license                 : MIT
  */
 
 #ifndef LOCALIZERFILTER_HPP
@@ -16,33 +16,29 @@
 #include "kermit/common.h"
 
 #include "ros/ros.h"
-#include "geometry_msgs/PoseStamped.h"
-#include "tf2/LinearMath/Quaternion.h"
-#include "tf2/LinearMath/Matrix3x3.h"
-#include "tf2_geometry_msgs/tf2_geometry_msgs.h"
-#include "kermit/mars_imu.h"
-#include "kermit/path_state.h"
+#include "geometry_msgs/Twist.h"
 
 class LocalizerFilter
 {
-  public:
-    LocalizerFilter ();
-    virtual ~LocalizerFilter ();
-  private:
-    void imu_callback (const kermit::mars_imu& msg);
-    void camera_callback (const geometry_msgs::PoseStamped& camera);
+        public:
+                LocalizerFilter ();
+                virtual ~LocalizerFilter ();
 
-    // Filter Stuff
-    struct {
-      kermit::path_state path_state;
-      kermit::path_state path_state_prev;
-    } state;
 
-    ros::NodeHandle nh;
-    
-    ros::Subscriber imu;
-    ros::Subscriber camera;
-    ros::Publisher path_state;
+        private:
+
+                // Register a callback for incomming data
+                template <class SDT>
+                void register_sensor_callback(std::function<void(SDT)> callback);
+
+                // Get geometry message to publish onto the wire
+                const geometry_msgs::Twist get_data();
+
+
+        private:
+                ros::NodeHandle nh;
+
+                std::map<std::function<void(SDT)>
 };
 
 #endif /* end of include guard LOCALIZERFILTER_HPP */

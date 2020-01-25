@@ -24,6 +24,7 @@ extern "C"
 #include <errno.h>
 #include <unistd.h>
 
+// Millisecond delay (like arduino)
 #define delay(val) usleep(1000 * val)
 #define DEFAULT_BAUD 9600
 
@@ -35,16 +36,8 @@ extern "C"
 int serialport_init(const char* serialport, int baud);
 int serialport_close(int fd);
 int serialport_writebyte(int fd, uint8_t b);
-int serialport_write_len(int fd, const uint8_t* str);
 int serialport_write(int fd, const uint8_t* str, size_t bytes);
 int serialport_read(int fd, uint8_t* buf, size_t bytes, int timeout);
-
-int serialport_read_until(int fd,
-                          uint8_t* buf,
-                          uint8_t until,
-                          size_t buf_max,
-                          int timeout);
-
 int serialport_flush(int fd);
 
 #ifdef __cplusplus

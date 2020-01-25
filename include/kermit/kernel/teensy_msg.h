@@ -1,7 +1,7 @@
 /**
- * @author      : theo (theo.j.lincke@gmail.com)
- * @file        : serial
- * @created     : Wednesday Nov 27, 2019 21:17:31 MST
+ * @author                        : theo (theo.j.lincke@gmail.com)
+ * @file                                : serial
+ * @created                 : Wednesday Nov 27, 2019 21:17:31 MST
  */
 
 #ifndef TEENSY_MSG_H
@@ -12,40 +12,51 @@
 #include <stdio.h>
 #include <errno.h>
 #include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
 
-#define TEENSY_BUFFER_SIZE ((sizeof(float) * 6) + sizeof(uint64_t) + sizeof(double))
-#define CMD_VEL_BUFFER_SIZE (sizeof(float) * 2)
+#define TEENSY_BUFFER_SIZE ((sizeof(uint16_t) * 2))
+#define CMD_VEL_BUFFER_SIZE (sizeof(float) * 2 + 3 + sizeof(uint16_t))
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-// An imu message
-// contains covariance and
-// reading (from a rolling average sample)
 typedef struct {
-  uint64_t id; // To help with dt
-  double dt; // cange in time
+        uint8_t auto_checksum;
 
-  float angular_velocity[3];
-  float linear_acceleration[3];
-} imu_message;
+        uint16_t checksum;
 
-// Input vector (linear and angular veloc)
-typedef struct {
-  float linear_v;
-  float angular_v;
-} cmd_vel;
+        uint8_t driving;
+        uint8_t mining;
+        uint8_t dumping;
 
-// Serializable teensy message
-typedef struct {
-  cmd_vel vel;
-  uint8_t buffer[CMD_VEL_BUFFER_SIZE];
+        float linear_v;
+        float angular_v;
+        uint8_t buffer[CMD_VEL_BUFFER_SIZE];
 } teensy_command;
 
-void update_teensy_command(teensy_command* cmd, float lin, float ang);
-void parse_imu_message(imu_message* msg, const uint8_t buffer[TEENSY_BUFFER_SIZE]);
+typedef struct {
+        uint16_t checksum;
+        uint16_t status;
+
+        // Here is where the rest of the teensy sensor data goes
+        
+        uint8_t buffer[TEENSY_BUFFER_SIZE];
+} teensy_response;
+
+typedef enum {BUSY = 1, IDLE = 0} teensy_data_state;
+typedef struct {
+        teensy_response resp;
+        teensy_command cmd;
+        teensy_data_state state;
+        
+} teensy_packet;
+
+int new_teensy_packet(teensy_packet* packet, int auto_checksum);
+int teensy_serialize(teensy_packet* cmd);
+int teensy_deserialize(teensy_packet* resp, const uint8_t buffer[TEENSY_BUFFER_SIZE]);
 
 #ifdef __cplusplus
 }
