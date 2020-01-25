@@ -4,6 +4,7 @@ project(kermit)
 # Used for compile database (for you complete me)
 # This can be unset and it wont change anything
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+add_compile_options(-std=c++17)
 
 # Compile coptions
 # add_compile_options(-std=c++11)
