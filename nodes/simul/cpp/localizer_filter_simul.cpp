@@ -7,12 +7,12 @@
 #include "kermit/localizer_filter/LocalizerFilter.hpp"
 #include "kermit/common.h"
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
 
-  ros::init(argc, argv, nodes::Localizer_Node);
-  
-  LocalizerFilter filter;
+        ros::init(argc, argv, nodes::Localizer_Node);
 
-  ros::spin();
-  return 0;
+        LocalizerFilter filter;
+
+        ros::spin();
+        return 0;
 }

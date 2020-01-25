@@ -18,35 +18,27 @@
 #include "tf2/LinearMath/Quaternion.h"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.h"
 
+class PosLocalizer {
+      public:
+        PosLocalizer();
+        ~PosLocalizer();
 
-class PosLocalizer  
-{
-public:
-  PosLocalizer();
-  ~PosLocalizer();
+      protected:
+        // Prints x y and theta
+        void print_state();
 
-protected:
+      protected:
+        bool verbose;
 
+      private:
+        // The publisher callback
+        std::string get_pos(void);
 
-
-
-  // Prints x y and theta
-  void print_state();
-
-protected:
-  bool verbose;
-
-private:
-  // The publisher callback
-  std::string get_pos(void);
-
-private:
-  struct
-  {
-    geometry_msgs::Quaternion quat_msg;
-    geometry_msgs::Point point;
-  } pos;
+      private:
+        struct {
+                geometry_msgs::Quaternion quat_msg;
+                geometry_msgs::Point point;
+        } pos;
 };
-
 
 #endif /* end of include guard POSLOCALIZER_HPP */

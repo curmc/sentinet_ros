@@ -23,7 +23,7 @@
 // Local Includes
 #include "wiiuse.h"
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -46,34 +46,34 @@ struct robot_s; // Forward declare
 
 // In c++, you would call this a virtual class
 struct peripheral {
-  void (*stop)(struct robot_s *robot);
-  void (*start)(struct robot_s *robot);
-  void (*loop)(struct robot_s *robot); // normally null???
+        void (*stop)(struct robot_s *robot);
+        void (*start)(struct robot_s *robot);
+        void (*loop)(struct robot_s *robot); // normally null???
 };
 
 // A type of peripheral
 struct drive_train {
-  struct peripheral *p;
+        struct peripheral *p;
 
-  // triggered on an event, calls this method
-  void *(*on_vel_callback)(struct robot_s *robot, float lin, float ang);
+        // triggered on an event, calls this method
+        void *(*on_vel_callback)(struct robot_s *robot, float lin, float ang);
 
-  float linear_vel;
-  float angular_vel;
+        float linear_vel;
+        float angular_vel;
 
-  float cruising_speed;
-  float speed_increment;
-  float max_speed;
+        float cruising_speed;
+        float speed_increment;
+        float max_speed;
 };
 
 // A robot type with all the information a robot needs
 struct robot_s {
-  struct peripheral *p;
+        struct peripheral *p;
 
-  struct drive_train *drive;
+        struct drive_train *drive;
 
-  uint8_t options;
-  float period;
+        uint8_t options;
+        float period;
 };
 
 /**
@@ -176,7 +176,8 @@ void attach_dt_callback(struct drive_train *dt,
  *
  * @return A drive train
  */
-struct drive_train create_drive_train(float cruising, float max_speed, float speed);
+struct drive_train create_drive_train(float cruising, float max_speed,
+                                      float speed);
 
 /**
  * @brief This is just linear, I'm lazy, haven't changed it yet

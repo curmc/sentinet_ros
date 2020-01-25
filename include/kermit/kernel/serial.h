@@ -9,8 +9,7 @@
 #define SERIAL_C_H
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 #include <stdint.h>
@@ -33,11 +32,11 @@ extern "C"
  * communication
  * functions
  */
-int serialport_init(const char* serialport, int baud);
+int serialport_init(const char *serialport, int baud);
 int serialport_close(int fd);
 int serialport_writebyte(int fd, uint8_t b);
-int serialport_write(int fd, const uint8_t* str, size_t bytes);
-int serialport_read(int fd, uint8_t* buf, size_t bytes, int timeout);
+int serialport_write(int fd, const uint8_t *str, size_t bytes);
+int serialport_read(int fd, uint8_t *buf, size_t bytes, int timeout);
 int serialport_flush(int fd);
 
 #ifdef __cplusplus

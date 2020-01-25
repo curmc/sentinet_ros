@@ -9,26 +9,25 @@
 // and shows the camera stream
 #include "kermit/camera/AprilDetector.hpp"
 
-
 /*
  * This is the
  * simulation file
  * so no serial here
  */
-int main(int argc, char** argv) {
-  ros::init(argc, argv, nodes::Camera_Node);
-  
-  AprilDetector detector("tag36h11");
+int main(int argc, char **argv) {
+        ros::init(argc, argv, nodes::Camera_Node);
 
-  detector.sync_start();
+        AprilDetector detector("tag36h11");
 
-  ros::Rate loop_rate(100);
+        detector.sync_start();
 
-  while(ros::ok()) {
-    detector.loop();
-    ros::spinOnce();
-    loop_rate.sleep();
-  }
+        ros::Rate loop_rate(100);
 
-  return 0;
+        while (ros::ok()) {
+                detector.loop();
+                ros::spinOnce();
+                loop_rate.sleep();
+        }
+
+        return 0;
 }

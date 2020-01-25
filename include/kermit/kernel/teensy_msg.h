@@ -19,8 +19,7 @@
 #define CMD_VEL_BUFFER_SIZE (sizeof(float) * 2 + 3 + sizeof(uint16_t))
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 typedef struct {
@@ -42,21 +41,22 @@ typedef struct {
         uint16_t status;
 
         // Here is where the rest of the teensy sensor data goes
-        
+
         uint8_t buffer[TEENSY_BUFFER_SIZE];
 } teensy_response;
 
-typedef enum {BUSY = 1, IDLE = 0} teensy_data_state;
+typedef enum { BUSY = 1, IDLE = 0 } teensy_data_state;
 typedef struct {
         teensy_response resp;
         teensy_command cmd;
         teensy_data_state state;
-        
+
 } teensy_packet;
 
-int new_teensy_packet(teensy_packet* packet, int auto_checksum);
-int teensy_serialize(teensy_packet* cmd);
-int teensy_deserialize(teensy_packet* resp, const uint8_t buffer[TEENSY_BUFFER_SIZE]);
+int new_teensy_packet(teensy_packet *packet, int auto_checksum);
+int teensy_serialize(teensy_packet *cmd);
+int teensy_deserialize(teensy_packet *resp,
+                       const uint8_t buffer[TEENSY_BUFFER_SIZE]);
 
 #ifdef __cplusplus
 }

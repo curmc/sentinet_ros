@@ -6,21 +6,20 @@
 
 #include "kermit/camera/AprilDetector.hpp"
 
+int main(int argc, char **argv) {
+        ros::init(argc, argv, "Camera");
 
-int main(int argc, char** argv) {
-  ros::init(argc, argv, "Camera");
-  
-  AprilDetector detector("tag36h11");
+        AprilDetector detector("tag36h11");
 
-  detector.sync_start();
+        detector.sync_start();
 
-  ros::Rate loop_rate(100);
+        ros::Rate loop_rate(100);
 
-  while(ros::ok()) {
-    detector.loop();
-    ros::spinOnce();
-    loop_rate.sleep();
-  }
+        while (ros::ok()) {
+                detector.loop();
+                ros::spinOnce();
+                loop_rate.sleep();
+        }
 
-  return 0;
+        return 0;
 }

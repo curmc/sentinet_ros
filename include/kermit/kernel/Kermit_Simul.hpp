@@ -20,15 +20,13 @@
 #include <QTimer>
 #include <QVector>
 
+class Kermit_Simul {
+      public:
+        Kermit_Simul();
+        virtual ~Kermit_Simul();
 
-class Kermit_Simul
-{
-  public:
-    Kermit_Simul ();
-    virtual ~Kermit_Simul ();
-  private:
-    /* private data */
+      private:
+        /* private data */
 };
 
 #endif /* end of include guard KERMIT_SIMUL_HPP */
-

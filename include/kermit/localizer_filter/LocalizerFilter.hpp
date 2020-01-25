@@ -18,28 +18,23 @@
 #include "ros/ros.h"
 #include "geometry_msgs/Twist.h"
 
-class LocalizerFilter
-{
-        public:
-                LocalizerFilter ();
-                virtual ~LocalizerFilter ();
+class LocalizerFilter {
+      public:
+        LocalizerFilter();
+        virtual ~LocalizerFilter();
 
+      private:
+        // Register a callback for incomming data
+        template <class SDT>
+        void register_sensor_callback(std::function<void(SDT)> callback);
 
-        private:
+        // Get geometry message to publish onto the wire
+        const geometry_msgs::Twist get_data();
 
-                // Register a callback for incomming data
-                template <class SDT>
-                void register_sensor_callback(std::function<void(SDT)> callback);
+      private:
+        ros::NodeHandle nh;
 
-                // Get geometry message to publish onto the wire
-                const geometry_msgs::Twist get_data();
-
-
-        private:
-                ros::NodeHandle nh;
-
-                std::map<std::function<void(SDT)>
+        std::map < std::function<void(SDT)>
 };
 
 #endif /* end of include guard LOCALIZERFILTER_HPP */
-

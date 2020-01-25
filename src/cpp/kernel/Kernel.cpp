@@ -8,35 +8,33 @@
 
 Kernel::Kernel(bool debug_, bool simulation_) {
 
-        sub = n.subscribe(topics::cmd_vel_topic, 1000, &Kernel::cmd_vel_callback, this);
+        sub = n.subscribe(topics::cmd_vel_topic, 1000,
+                          &Kernel::cmd_vel_callback, this);
         // pub = n.advertise<kermit::mars_imu>(topics::imu_topic, 1000);
 
         simulation = simulation_;
 
-        if(simulation)
-        {
-                simul_state = std::unique_ptr<KermitSimulation>(new KermitSimulation(n, pub));
+        if (simulation) {
+                simul_state = std::unique_ptr<KermitSimulation>(
+                    new KermitSimulation(n, pub));
         }
 
         debug = debug_;
 }
 
-Kernel::~Kernel()
-{
-        teensy_cleanup(&dev);
-}
+Kernel::~Kernel() { teensy_cleanup(&dev); }
 
-bool Kernel::initialize_teensy(const std::string& port) {
+bool Kernel::initialize_teensy(const std::string &port) {
 
-        if(simulation)
-        {
-                ROS_WARN("Started kernel in simulation mode, changing to actual mode");
+        if (simulation) {
+                ROS_WARN("Started kernel in simulation mode, changing to "
+                         "actual mode");
                 simulation = false;
         }
 
         int ret;
 
-        if((ret = new_teensy_device(&dev, port.c_str())) == -1)
+        if ((ret = new_teensy_device(&dev, port.c_str())) == -1)
                 return ret;
 
         debug = false;
@@ -45,49 +43,46 @@ bool Kernel::initialize_teensy(const std::string& port) {
         return true;
 }
 
-
 bool Kernel::teensy_callback(float lin, float ang) {
         int ret = teensy_write_drive(&dev, lin, ang);
 
-        if(ret == -1)
+        if (ret == -1)
                 ROS_WARN("Warning, message was not written to serial device");
 
         return ret;
 }
 
-
 static double angle_normalize(double theta) {
-        while(theta > 3.14){
+        while (theta > 3.14) {
                 theta -= 2.0 * 3.14;
         }
-        while(theta < -3.14){
+        while (theta < -3.14) {
                 theta += 2.0 * 3.14;
         }
         return theta;
 }
 
-static double rad_to_deg(double rad) {
-        return 180 * (rad / 3.14);
-}
-
+static double rad_to_deg(double rad) { return 180 * (rad / 3.14); }
 
 bool Kernel::KermitSimulation::cmd_vel_callback(float lin, float ang) {
 
         // Get delta time
         steady_clock::time_point prev = timer;
         timer = steady_clock::now();
-        double dt = double(duration_cast<nanoseconds>(timer - prev).count()) / 1000000000;
+        double dt = double(duration_cast<nanoseconds>(timer - prev).count()) /
+                    1000000000;
 
         // Overflow TODO
-        if(timer < prev)
+        if (timer < prev)
                 return false;
 
-        // Two cases to avoid nans, radius = infinity (ang = 0) or radius = v / w
-        if(angular == 0.0) {
+        // Two cases to avoid nans, radius = infinity (ang = 0) or radius = v /
+        // w
+        if (angular == 0.0) {
 
                 // Theoretical x and y position (account for nan for rare cases)
-                double x_pos_ = x_pos + cos(yaw) * veloc* dt;        
-                double y_pos_ = y_pos + sin(yaw) * veloc* dt;        
+                double x_pos_ = x_pos + cos(yaw) * veloc * dt;
+                double y_pos_ = y_pos + sin(yaw) * veloc * dt;
 
                 // TODO is this necessary?
                 x_pos = (isnan(x_pos) ? x_pos : x_pos_);
@@ -99,7 +94,7 @@ bool Kernel::KermitSimulation::cmd_vel_callback(float lin, float ang) {
                 assert(!isnan(angular));
 
                 float r = veloc / angular;
-        
+
                 // TODO is this necessary?
                 assert(!isnan(r));
 
@@ -148,9 +143,10 @@ bool Kernel::KermitSimulation::cmd_vel_callback(float lin, float ang) {
         return true;
 }
 
-
-Kernel::KermitSimulation::KermitSimulation(ros::NodeHandle& handle, ros::Publisher& imu_pub_) {
-        camera_simul = handle.advertise<geometry_msgs::PoseStamped>(topics::camera_topic, 10);
+Kernel::KermitSimulation::KermitSimulation(ros::NodeHandle &handle,
+                                           ros::Publisher &imu_pub_) {
+        camera_simul = handle.advertise<geometry_msgs::PoseStamped>(
+            topics::camera_topic, 10);
         imu_pub = &imu_pub_;
 
         timer = steady_clock::now();
@@ -163,32 +159,31 @@ Kernel::KermitSimulation::KermitSimulation(ros::NodeHandle& handle, ros::Publish
 
 Kernel::KermitSimulation::~KermitSimulation() {}
 
-void Kernel::cmd_vel_callback(const geometry_msgs::Twist& msg) {
-        if(debug)
+void Kernel::cmd_vel_callback(const geometry_msgs::Twist &msg) {
+        if (debug)
                 debug_printf(msg);
 
-        // float lin = sqrt(msg.linear.x * msg.linear.x + msg.linear.y * msg.linear.y);
+        // float lin = sqrt(msg.linear.x * msg.linear.x + msg.linear.y *
+        // msg.linear.y);
         float lin = msg.linear.x;
         float ang = msg.angular.z;
 
         bool status = false;
 
-        if(simulation)
+        if (simulation)
                 status = simul_state->cmd_vel_callback(lin, ang);
-        else 
+        else
                 status = teensy_callback(lin, ang);
 
-        if(!status)
+        if (!status)
                 debug_printf(msg);
 
         return;
 }
 
-
-void Kernel::debug_printf(const geometry_msgs::Twist&) {
+void Kernel::debug_printf(const geometry_msgs::Twist &) {
         return;
-        // ROS_INFO("Linear: %f %f %f", msg.linear.x, msg.linear.y, msg.linear.z);
-        // ROS_INFO("Angular: %f %f %f", msg.angular.x, msg.angular.y, msg.angular.z);
+        // ROS_INFO("Linear: %f %f %f", msg.linear.x, msg.linear.y,
+        // msg.linear.z); ROS_INFO("Angular: %f %f %f", msg.angular.x,
+        // msg.angular.y, msg.angular.z);
 }
-
-

@@ -11,20 +11,19 @@
 #include <inttypes.h>
 
 typedef struct {
-  float measurement;
-  float mean;
-  uint64_t count;
+        float measurement;
+        float mean;
+        uint64_t count;
 } reading;
 
 typedef struct {
-  reading x;
-  reading y;
-  float xy_sum;
-  float cov;
+        reading x;
+        reading y;
+        float xy_sum;
+        float cov;
 } covariance;
 
 covariance initialize_covariance();
-float update_covariance(covariance* m, float xm, float ym);
+float update_covariance(covariance *m, float xm, float ym);
 
 #endif /* end of include guard STATISTICS_H */
-

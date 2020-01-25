@@ -18,9 +18,7 @@
 
 #include "kermit/common.h"
 
-
-extern "C"
-{
+extern "C" {
 #include <apriltag/apriltag.h>
 #include <apriltag/apriltag_pose.h>
 #include <apriltag/tag36h11.h>
@@ -37,49 +35,45 @@ using namespace cv;
 
 #define DEFAULT_TAG "tag36h11"
 
-class AprilDetector 
-{
-public:
-  AprilDetector(const std::string type = DEFAULT_TAG);
-  ~AprilDetector();
+class AprilDetector {
+      public:
+        AprilDetector(const std::string type = DEFAULT_TAG);
+        ~AprilDetector();
 
-  // Starts the camera
-  bool sync_start();
-  // Loops camera logic
-  bool loop();
+        // Starts the camera
+        bool sync_start();
+        // Loops camera logic
+        bool loop();
 
-private:
-  // Used for default destructor
-  void destroy_video();
-  void destroy_tag();
+      private:
+        // Used for default destructor
+        void destroy_video();
+        void destroy_tag();
 
+        // April Tag specific init options
+        bool initialize_tag(const std::string type);
 
-  // April Tag specific init options
-  bool initialize_tag(const std::string type);
+        // CV Namespace
+        struct {
+                VideoCapture cap;
+                Mat frame;
+                Mat gray;
+        } video;
 
-  // CV Namespace
-  struct
-  {
-    VideoCapture cap;
-    Mat frame;
-    Mat gray;
-  } video;
+        // April tag namespace
+        struct {
+                int type;
+                apriltag_family_t *tf;
+                apriltag_detector_t *td;
+                zarray_t *detections;
+                apriltag_detection_info_t info;
+        } tag;
 
-  // April tag namespace
-  struct
-  {
-    int type;
-    apriltag_family_t* tf;
-    apriltag_detector_t* td;
-    zarray_t* detections;
-    apriltag_detection_info_t info;
-  } tag;
+        // Message Namespace
 
-  // Message Namespace
-
-  geometry_msgs::PoseStamped message; 
-  ros::NodeHandle n;
-  ros::Publisher pub;
+        geometry_msgs::PoseStamped message;
+        ros::NodeHandle n;
+        ros::Publisher pub;
 };
 
 #endif /* end of include guard APRIL_POS_ESTIMATOR_H */

@@ -43,10 +43,10 @@
  * @return nothing
  */
 void *up_callback(struct controller_s *controller, struct robot_s *robot) {
-  if (controller->state == DRIVE) {
-    robot->drive->on_vel_callback(robot, 0, 1);
-  }
-  return NULL;
+        if (controller->state == DRIVE) {
+                robot->drive->on_vel_callback(robot, 0, 1);
+        }
+        return NULL;
 }
 
 /**
@@ -62,10 +62,10 @@ void *up_callback(struct controller_s *controller, struct robot_s *robot) {
  * @return nothing
  */
 void *down_callback(struct controller_s *controller, struct robot_s *robot) {
-  if (controller->state == DRIVE) {
-    robot->drive->on_vel_callback(robot, 0, -1);
-  }
-  return NULL;
+        if (controller->state == DRIVE) {
+                robot->drive->on_vel_callback(robot, 0, -1);
+        }
+        return NULL;
 }
 
 /**
@@ -81,10 +81,10 @@ void *down_callback(struct controller_s *controller, struct robot_s *robot) {
  * @return nothing
  */
 void *left_callback(struct controller_s *controller, struct robot_s *robot) {
-  if (controller->state == DRIVE) {
-    robot->drive->on_vel_callback(robot, -1, 0);
-  }
-  return NULL;
+        if (controller->state == DRIVE) {
+                robot->drive->on_vel_callback(robot, -1, 0);
+        }
+        return NULL;
 }
 
 /**
@@ -98,10 +98,10 @@ void *left_callback(struct controller_s *controller, struct robot_s *robot) {
  * @return nothing
  */
 void *right_callback(struct controller_s *controller, struct robot_s *robot) {
-  if (controller->state == DRIVE) {
-    robot->drive->on_vel_callback(robot, 1, 0);
-  }
-  return NULL;
+        if (controller->state == DRIVE) {
+                robot->drive->on_vel_callback(robot, 1, 0);
+        }
+        return NULL;
 }
 
 /**
@@ -117,14 +117,14 @@ void *right_callback(struct controller_s *controller, struct robot_s *robot) {
  * @return  nothing
  */
 void *home_callback(struct controller_s *controller, struct robot_s *robot) {
-  if (controller->state == DRIVE) {
-    robot_setopt(robot, ADVNCD);
-    controller->state = ADVANCED;
-  } else if (controller->state == ADVANCED) {
-    robot_unsetopt(robot, ADVNCD);
-    controller->state = DRIVE;
-  }
-  return NULL;
+        if (controller->state == DRIVE) {
+                robot_setopt(robot, ADVNCD);
+                controller->state = ADVANCED;
+        } else if (controller->state == ADVANCED) {
+                robot_unsetopt(robot, ADVNCD);
+                controller->state = DRIVE;
+        }
+        return NULL;
 }
 
 /**
@@ -141,60 +141,59 @@ void *home_callback(struct controller_s *controller, struct robot_s *robot) {
  * @return nothing
  */
 void *one_callback(struct controller_s *controller, struct robot_s *robot) {
-  if (controller->state == DRIVE) {
-    return NULL;
-  } else if (controller->state == ADVANCED) {
-    robot_changeopt(robot, DISCLINANG);
-  }
-  return NULL;
+        if (controller->state == DRIVE) {
+                return NULL;
+        } else if (controller->state == ADVANCED) {
+                robot_changeopt(robot, DISCLINANG);
+        }
+        return NULL;
 }
 
-void *b_callback(struct controller_s*, struct robot_s *robot) {
-  if (robot->drive) {
-    (*robot->drive->p->stop)(robot);
-  }
-  return NULL;
+void *b_callback(struct controller_s *, struct robot_s *robot) {
+        if (robot->drive) {
+                (*robot->drive->p->stop)(robot);
+        }
+        return NULL;
 }
 
 struct controller_s kermit_controller() {
-  struct controller_s kermit;
-  kermit.nunchuk = NULL;
-  kermit.state = DRIVE;
+        struct controller_s kermit;
+        kermit.nunchuk = NULL;
+        kermit.state = DRIVE;
 
-  kermit.stick = (struct stick_s*)malloc(sizeof(struct stick_s));
+        kermit.stick = (struct stick_s *)malloc(sizeof(struct stick_s));
 
-  set_controller_zero(&kermit);
+        set_controller_zero(&kermit);
 
-  kermit.stick->minus.callback = NULL;
-  kermit.stick->plus.callback = NULL;
-  kermit.stick->a.callback = NULL;
-  kermit.stick->two.callback = NULL; 
+        kermit.stick->minus.callback = NULL;
+        kermit.stick->plus.callback = NULL;
+        kermit.stick->a.callback = NULL;
+        kermit.stick->two.callback = NULL;
 
-  kermit.stick->home.callback = home_callback;
-  kermit.stick->one.callback = one_callback;
-  kermit.stick->up.callback = up_callback;
-  kermit.stick->down.callback = down_callback;
-  kermit.stick->left.callback = left_callback;
-  kermit.stick->right.callback = right_callback;
-  kermit.stick->b.callback = b_callback;
+        kermit.stick->home.callback = home_callback;
+        kermit.stick->one.callback = one_callback;
+        kermit.stick->up.callback = up_callback;
+        kermit.stick->down.callback = down_callback;
+        kermit.stick->left.callback = left_callback;
+        kermit.stick->right.callback = right_callback;
+        kermit.stick->b.callback = b_callback;
 
-
-  return kermit;
+        return kermit;
 }
 
 struct robot_s kermit_robot() {
-  struct robot_s rob = create_robot();
+        struct robot_s rob = create_robot();
 
-  // Initialize drive train
-  struct drive_train *drive = 
-    (struct drive_train*)malloc(sizeof(struct drive_train));
+        // Initialize drive train
+        struct drive_train *drive =
+            (struct drive_train *)malloc(sizeof(struct drive_train));
 
-  *drive = create_drive_train(4, 10, 1);
-  rob.drive = drive;
-  rob.period = .01;
+        *drive = create_drive_train(4, 10, 1);
+        rob.drive = drive;
+        rob.period = .01;
 
-  start_robot(&rob);
-  return rob;
+        start_robot(&rob);
+        return rob;
 }
 
 #endif /* end of include guard KERMIT_H */

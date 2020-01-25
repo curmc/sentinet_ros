@@ -19,9 +19,9 @@ extern "C" {
 using namespace cv;
 
 typedef struct {
-  double roll;
-  double pitch;
-  double yaw;
+        double roll;
+        double pitch;
+        double yaw;
 } orientation;
 
 // OPENCV Functions
@@ -31,10 +31,7 @@ Mat cvEulerAnglesToRotationMatrix(const orientation &theta);
 
 // April Tags functions
 // bool aprilIsRotationMatrix(const matd_t* R);
-orientation aprilRotationMatrixToEulerAngles(const matd_t* R);
+orientation aprilRotationMatrixToEulerAngles(const matd_t *R);
 // matd_t aprilEulerAnglesToRotationMatrix(const orientation* o);
 
-
-
 #endif /* end of include guard SMATH_H */
-

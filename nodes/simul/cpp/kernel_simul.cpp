@@ -6,14 +6,11 @@
 
 #include "kermit/kernel/Kernel.hpp"
 
+int main(int argc, char **argv) {
 
-int main(int argc, char** argv) {
+        ros::init(argc, argv, nodes::Kernel_Node);
 
-  ros::init(argc, argv, nodes::Kernel_Node);
-
-  Kernel kernel(false, true);
-  ros::spin();
-  return 0;
+        Kernel kernel(false, true);
+        ros::spin();
+        return 0;
 }
-
-

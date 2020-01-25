@@ -8,7 +8,6 @@
 
 #define WII_CONTROLLER_H
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -35,8 +34,9 @@ struct controller_s;
  * buttons do. Generally, this is not a very big number
  */
 struct button_s {
-  void *(*callback)(struct controller_s *controller, struct robot_s *robot);
-  short value;
+        void *(*callback)(struct controller_s *controller,
+                          struct robot_s *robot);
+        short value;
 };
 
 /**
@@ -46,8 +46,9 @@ struct button_s {
  * modes
  */
 struct attribute_s {
-  void *(*callback)(struct controller_s *controller, struct robot_s *robot);
-  float value;
+        void *(*callback)(struct controller_s *controller,
+                          struct robot_s *robot);
+        float value;
 };
 
 typedef struct attribute_s attribute;
@@ -61,36 +62,36 @@ typedef struct button_s button;
  * wiiuse code and change this
  */
 struct nunchuk_s {
-  button c;
-  button z;
-  attribute roll;
-  attribute pitch;
-  attribute yaw;
-  attribute angle;
-  attribute magnitude;
-  attribute vals_x;
-  attribute vals_y;
+        button c;
+        button z;
+        attribute roll;
+        attribute pitch;
+        attribute yaw;
+        attribute angle;
+        attribute magnitude;
+        attribute vals_x;
+        attribute vals_y;
 };
 
 struct stick_s {
-  button up;
-  button down;
-  button right;
-  button left;
-  button a;
-  button b;
-  button one;
-  button two;
-  button home;
-  button minus;
-  button plus;
+        button up;
+        button down;
+        button right;
+        button left;
+        button a;
+        button b;
+        button one;
+        button two;
+        button home;
+        button minus;
+        button plus;
 };
 
 enum controller_state { DRIVE, ADVANCED };
 struct controller_s {
-  struct nunchuk_s *nunchuk;
-  struct stick_s *stick;
-  enum controller_state state;
+        struct nunchuk_s *nunchuk;
+        struct stick_s *stick;
+        enum controller_state state;
 };
 
 /**

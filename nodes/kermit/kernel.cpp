@@ -6,19 +6,14 @@
 
 #include "kermit/kernel/Kernel.hpp"
 
+int main(int argc, char **argv) {
 
-int main(int argc, char** argv) {
+        ros::init(argc, argv, "Kernel");
 
+        Kernel kernel(true, false);
+        kernel.initialize_teensy("/dev/ttyACM0");
 
-  ros::init(argc, argv, "Kernel");
+        ros::spin();
 
-  Kernel kernel(true, false);
-  kernel.initialize_teensy("/dev/ttyACM0");
-
-  ros::spin();
-
-  return 0;
-
+        return 0;
 }
-
-
