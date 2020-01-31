@@ -2,7 +2,7 @@
 
 namespace rmt {
 
-enum class GENERIC_BUTTONS : uint_16_t {
+enum class GENERIC_BUTTON : uint16_t {
         FORWARD = (1 << 0),
         BACKWARD = (1 << 1),
         LEFT = (1 << 2),
@@ -17,6 +17,8 @@ enum class GENERIC_BUTTONS : uint_16_t {
 class Controller {
       public:
         virtual void poll() = 0;
+
+        virtual void output_status();
 
       private:
         uint16_t state{0};
