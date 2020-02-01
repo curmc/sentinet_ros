@@ -74,20 +74,20 @@ add_library(kermitc
 add_library(kermitcpp
   src/cpp/kernel/Kernel.cpp
   src/cpp/camera/AprilDetector.cpp
-  src/cpp/math/smath.cpp
-  src/cpp/localizer_filter/LocalizerFilter.cpp)
+  src/cpp/math/smath.cpp)
+  # src/cpp/localizer_filter/LocalizerFilter.cpp)
 
 target_link_libraries(kermitc wiiuse)
 target_link_libraries(kermitcpp ${OpenCV_LIBS} apriltag)
 
 # SIMULATION NODES
-add_executable(localizer_simul nodes/simul/cpp/localizer_filter_simul.cpp)
+# add_executable(localizer_simul nodes/simul/cpp/localizer_filter_simul.cpp)
 add_executable(camera_simul nodes/simul/cpp/camera_simul.cpp)
 add_executable(kernel_simul nodes/simul/cpp/kernel_simul.cpp)
 add_executable(kermit nodes/kermit/kernel.cpp)
 # add_executable(kermit_wii nodes/cpp/kermit/wii_controller.cpp)
 
-target_link_libraries(localizer_simul ${catkin_LIBRARIES} kermitc kermitcpp)
+# target_link_libraries(localizer_simul ${catkin_LIBRARIES} kermitc kermitcpp)
 target_link_libraries(kernel_simul ${catkin_LIBRARIES} kermitc kermitcpp)
 target_link_libraries(camera_simul ${catkin_LIBRARIES} kermitc kermitcpp)
 target_link_libraries(kermit ${catkin_LIBRARIES} kermitc kermitcpp)
@@ -102,7 +102,7 @@ install(DIRECTORY include/${PROJECT_NAME}/
 install(PROGRAMS nodes/python/controller.py DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 install(DIRECTORY src/controller/controller DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
 
-install(TARGETS kernel_simul camera_simul localizer_simul
+install(TARGETS kernel_simul camera_simul 
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
