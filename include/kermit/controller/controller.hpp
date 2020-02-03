@@ -1,8 +1,9 @@
 // GENERIC CONTROLLER
+#include <type_traits>
 
 namespace rmt {
 
-enum class GENERIC_BUTTON : uint16_t {
+enum class GENERIC_BUTTON : unsigned short {
         FORWARD = (1 << 0),
         BACKWARD = (1 << 1),
         LEFT = (1 << 2),
@@ -12,6 +13,10 @@ enum class GENERIC_BUTTON : uint16_t {
         DISCLINANG = (1 << 6),
         DEBUG = (1 << 7),
         ADVANCED = (1 << 8)
+};
+
+template <typename E> constexpr auto to_under(E e) {
+        return static_cast<typename std::underlying_type<E>::type>(e);
 }
 
 class Controller {
@@ -20,7 +25,7 @@ class Controller {
 
         virtual void output_status();
 
-      private:
-        uint16_t state{0};
+      protected:
+        unsigned short state{0};
 };
 } // namespace rmt

@@ -1,11 +1,14 @@
 #include "kermit/controller/controller.hpp"
 
+#include <iostream>
+#include <string>
+
 namespace rmt {
 
 void Controller::output_status() {
-        const auto output_state = [&](GENERIC_BUTTON status, string name) {
-                string output = (state & status) ? "1" : "0";
-                cout << name << ": " << output << '\n';
+        const auto output_state = [&](GENERIC_BUTTON status, std::string name) {
+                std::string output = (state & to_under(status)) ? "1" : "0";
+                std::cout << name << ": " << output << '\n';
         };
 
         output_state(GENERIC_BUTTON::FORWARD, "FORWARD");

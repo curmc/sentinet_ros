@@ -1,5 +1,8 @@
-#include "controller.hpp"
+#include "kermit/controller/controller.hpp"
 #include "wiiuse.h"
+
+#include <cstdint>
+#include <utility>
 
 #include <array>
 
@@ -38,17 +41,25 @@ class WiiController : public Controller {
         const bool verbose{false};
 
         static constexpr int MAXWIIMOTES{1};
-        static constexpr std::array<std::pair<uint16_t, uint16_t>, 9>
-            BUTTON_MAP {
-                (WIIMOTE_BUTTON_UP, GENERIC_BUTTON::FORWARD),
-                    (WIIMOTE_BUTTON_DOWN, GENERIC_BUTTON::BACKWARD),
-                    (WIIMOTE_BUTTON_LEFT, GENERIC_BUTTON::LEFT),
-                    (WIIMOTE_BUTTON_RIGHT, GENERIC_BUTTON::RIGHT),
-                    (WIIMOTE_BUTTON_HOME, GENERIC_BUTTON::VERBOSE),
-                    (WIIMOTE_BUTTON_MINUS, GENERIC_BUTTON::NONLIN),
-                    (WIIMOTE_BUTTON_PLUS, GENERIC_BUTTON::DISCLINANG),
-                    (WIIMOTE_BUTTON_ONE, GENERIC_BUTTON::DEBUG),
-                    (WIIMOTE_BUTTON_TWO, GENERIC_BUTTON::ADVANCED)
-        }
-};
+        static constexpr std::array<std::pair<unsigned short, unsigned short>,
+                                    9>
+            BUTTON_MAP{std::make_pair(UINT16_C(WIIMOTE_BUTTON_UP),
+                                      to_under(GENERIC_BUTTON::FORWARD)),
+                       std::make_pair(UINT16_C(WIIMOTE_BUTTON_DOWN),
+                                      to_under(GENERIC_BUTTON::BACKWARD)),
+                       std::make_pair(UINT16_C(WIIMOTE_BUTTON_LEFT),
+                                      to_under(GENERIC_BUTTON::LEFT)),
+                       std::make_pair(UINT16_C(WIIMOTE_BUTTON_RIGHT),
+                                      to_under(GENERIC_BUTTON::RIGHT)),
+                       std::make_pair(UINT16_C(WIIMOTE_BUTTON_HOME),
+                                      to_under(GENERIC_BUTTON::VERBOSE)),
+                       std::make_pair(UINT16_C(WIIMOTE_BUTTON_MINUS),
+                                      to_under(GENERIC_BUTTON::NONLIN)),
+                       std::make_pair(UINT16_C(WIIMOTE_BUTTON_PLUS),
+                                      to_under(GENERIC_BUTTON::DISCLINANG)),
+                       std::make_pair(UINT16_C(WIIMOTE_BUTTON_ONE),
+                                      to_under(GENERIC_BUTTON::DEBUG)),
+                       std::make_pair(UINT16_C(WIIMOTE_BUTTON_TWO),
+                                      to_under(GENERIC_BUTTON::ADVANCED))};
+}; // namespace rmt
 } // namespace rmt

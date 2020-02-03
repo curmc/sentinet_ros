@@ -4,6 +4,8 @@ project(kermit)
 # Used for compile database (for you complete me)
 # This can be unset and it wont change anything
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Compile coptions
 # add_compile_options(-std=c++11)
@@ -73,7 +75,10 @@ add_library(kermitc
 add_library(kermitcpp
   src/cpp/kernel/Kernel.cpp
   src/cpp/camera/AprilDetector.cpp
-  src/cpp/math/smath.cpp)
+  src/cpp/math/smath.cpp
+  src/cpp/controller/controller.cpp
+  src/cpp/controller/wii/wii_controller.cpp
+  src/cpp/controller/robot_controller.cpp)
   # src/cpp/localizer_filter/LocalizerFilter.cpp)
 
 target_link_libraries(kermitc wiiuse)

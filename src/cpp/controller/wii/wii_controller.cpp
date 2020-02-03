@@ -4,22 +4,21 @@
 
 namespace rmt {
 
-WiiController::WiiController() { &data = wiiuse_init(MAXWIIMOTES); }
+WiiController::WiiController() { data = *wiiuse_init(MAXWIIMOTES); }
 
 WiiController::WiiController(WiiController &&other) {
         wiiuse_cleanup(&data, MAXWIIMOTES);
         found = 0;
         connected = 0;
-        verbose = false;
         swap(*this, other);
 }
 
-WiiController::Wiicontroller &operator=(WiiController &&other) {
+WiiController &WiiController::operator=(WiiController &&other) {
         wiiuse_cleanup(&data, MAXWIIMOTES);
         found = 0;
         connected = 0;
-        verbose = false;
         swap(*this, other);
+        return *this;
 }
 
 WiiController::~WiiController() { wiiuse_cleanup(&data, MAXWIIMOTES); }
@@ -29,42 +28,42 @@ inline void swap(WiiController &first, WiiController &second) {
         swap(first.data, second.data);
         swap(first.found, second.found);
         swap(first.connected, second.connected);
-        swap(first.verbose, second.verbose);
 }
 
 void WiiController::connect() {
 
         found = wiiuse_find(&data, MAXWIIMOTES, 5);
         if (!found) {
-                cout << "No wiimotes found." << endl;
-                return -1;
+                std::cout << "No wiimotes found.\n";
+                return;
         }
 
         connected = wiiuse_connect(&data, MAXWIIMOTES);
         if (connected) {
-                cout << "Connected to " << connected << "wiimote";
-                (connected > 1) ? cout << "s.\n" : cout << ".\n";
+                std::cout << "Connected to " << connected << "wiimote";
+                (connected > 1) ? std::cout << "s.\n" : std::cout << ".\n";
         } else {
-                cout << "Failed to connect, although found " << found
-                     << "wiimote";
-                (found > 1) ? cout << "s.\n" : cout << ".\n";
+                std::cout << "Failed to connect, although found " << found
+                          << "wiimote";
+                (found > 1) ? std::cout << "s.\n" : std::cout << ".\n";
 
-                return -1;
+                return;
         }
 
-        wiiuse_set_leds(data[0], WIIMOTE_LED_1);
+        wiiuse_set_leds(data, WIIMOTE_LED_1);
 
         // Saving battery
-        wiiuse_motion_sensing(data[0], 0);
-        wiiuse_set_ir(data[0], 0);
-        wiiuse_set_motion_plus(data[0], 0);
+        wiiuse_motion_sensing(data, 0);
+        wiiuse_set_ir(data, 0);
+        wiiuse_set_motion_plus(data, 0);
 }
 
 int WiiController::heartbeat() const {
-        if (data && WIIMOTE_IS_CONNECTED(*data)) {
+        if (data && WIIMOTE_IS_CONNECTED(data)) {
                 return 1;
         } else {
-                cout << "HEARTBEAT FAILURE: Unexpected wiimote disconnect\n";
+                std::cout
+                    << "HEARTBEAT FAILURE: Unexpected wiimote disconnect\n";
                 return 0;
         }
         return 0;
@@ -100,8 +99,8 @@ void WiiController::poll() {
 
 // Alter controller state on button press
 void WiiController::event() {
-        const auto toggle_state = [&](GENERIC_BUTTON toggling,
-                                      const uint16_t button) {
+        const auto toggle_state = [this](const unsigned int toggling,
+                                         const unsigned int button) {
                 if (IS_JUST_PRESSED(data, button)) {
                         state = !(state & toggling) ? state | toggling
                                                     : state - toggling;
@@ -121,13 +120,10 @@ void WiiController::event() {
 void WiiController::output_status() {
 
         std::cout << "---- CONTROLLER STATUS ----\n"
-                  << "battery:      " << data[0]->battery_level << '\n'
+                  << "battery:      " << data->battery_level << '\n'
                   << "STATE:\n";
 
         Controller::output_status();
 }
-
-return 0;
-} // namespace rmt
 
 } // namespace rmt
