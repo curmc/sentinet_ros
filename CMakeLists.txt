@@ -66,30 +66,30 @@ include_directories(
 add_library(kermitc
   src/c/kernel/serial.c
   src/c/kernel/teensy_msg.c
-  src/c/kernel/teensy_serial.c
-  src/c/controller/wii/robot_control.c
-  src/c/controller/wii/wii_controller.c)
+  src/c/kernel/teensy_serial.c)
+  #src/c/controller/wii/robot_control.c
+  #src/c/controller/wii/wii_controller.c)
 
 # C++
 add_library(kermitcpp
   src/cpp/kernel/Kernel.cpp
-  src/cpp/camera/AprilDetector.cpp
+  #src/cpp/camera/AprilDetector.cpp
   src/cpp/math/smath.cpp)
   # src/cpp/localizer_filter/LocalizerFilter.cpp)
 
-target_link_libraries(kermitc wiiuse)
-target_link_libraries(kermitcpp ${OpenCV_LIBS} apriltag)
+# target_link_libraries(kermitc wiiuse)
+# target_link_libraries(kermitcpp ${OpenCV_LIBS} apriltag)
 
 # SIMULATION NODES
 # add_executable(localizer_simul nodes/simul/cpp/localizer_filter_simul.cpp)
-add_executable(camera_simul nodes/simul/cpp/camera_simul.cpp)
-add_executable(kernel_simul nodes/simul/cpp/kernel_simul.cpp)
+# add_executable(camera_simul nodes/simul/cpp/camera_simul.cpp)
+# add_executable(kernel_simul nodes/simul/cpp/kernel_simul.cpp)
 add_executable(kermit nodes/kermit/kernel.cpp)
 # add_executable(kermit_wii nodes/cpp/kermit/wii_controller.cpp)
 
 # target_link_libraries(localizer_simul ${catkin_LIBRARIES} kermitc kermitcpp)
-target_link_libraries(kernel_simul ${catkin_LIBRARIES} kermitc kermitcpp)
-target_link_libraries(camera_simul ${catkin_LIBRARIES} kermitc kermitcpp)
+# target_link_libraries(kernel_simul ${catkin_LIBRARIES} kermitc kermitcpp)
+# target_link_libraries(camera_simul ${catkin_LIBRARIES} kermitc kermitcpp)
 target_link_libraries(kermit ${catkin_LIBRARIES} kermitc kermitcpp)
 # target_link_libraries(kermit_wii ${catkin_LIBRARIES} kermitc kermitcpp)
 
