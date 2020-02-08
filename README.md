@@ -34,7 +34,6 @@ Recommend 'ros-melodic-desktop-full'
 ## Building and Installing wiiuse
 https://github.com/wiiuse/wiiuse
 ```bash
-$ sudo apt-get install libbluetooth-dev
 $ git checkout https://github.com/wiiuse/wiiuse.git
 $ cd wiiuse
 $ mkdir build
