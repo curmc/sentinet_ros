@@ -18,11 +18,55 @@ A List of ros nodes
 
 # Build instructions
 
-### Installing dependencies
-```bash
-$ sudo apt install cmake make curl libcurl4-gnutls-dev autoconf automake libtool g++ unzip libzmq3-dev
+This all assumes you're on ubuntu. 
 
-# Build the ros project
+## Installing Dependencies
+```bash 
+$ sudo apt install cmake make curl libcurl4-gnutls-dev autoconf automake libtool g++ unzip libzmq3-dev libbluetooth-dev
+```
+
+## Installing ROS
+http://wiki.ros.org/melodic/Installation/Ubuntu
+
+Recommend 'ros-melodic-desktop-full'
+
+
+## Building and Installing wiiuse
+https://github.com/wiiuse/wiiuse
+```bash
+$ git checkout https://github.com/wiiuse/wiiuse.git
+$ cd wiiuse
+$ mkdir build
+$ cd build
+$ cmake .. [-DCMAKE_INSTALL_PREFIX=/usr/local] [-DCMAKE_BUILD_TYPE=Release] [-DBUILD_EXAMPLE_SDL=NO]
+$ make && sudo make install
+```
+
+## Building and Installing apriltag
+https://github.com/AprilRobotics/apriltag
+```bash
+$ git checkout https://github.com/AprilRobotics/apriltag
+$ cd apriltag
+$ mkdir build
+$ cd build
+$ cmake ..
+$ make && sudo make install
+```
+
+## Building and Installing apriltag_ros
+https://github.com/AprilRobotics/apriltag_ros
+```bash
+$ cd ~
+$ mkdir -p catkin_ws/src
+$ cd catkin_ws/src
+$ git clone https://github.com/AprilRobotics/apriltag_ros.git
+$ cd ..
+$ rosdep install --from-paths src --ignore-src -r -y
+$ catkin_make_isolated
+```
+
+## Building the project
+```bash
 $ cd path/to/catkin_ws
 $ git clone https://github.com/curmc/sentinet_ros ./src/kermit
 $ catkin_make
