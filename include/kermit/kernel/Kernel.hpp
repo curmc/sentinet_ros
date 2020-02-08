@@ -45,13 +45,21 @@ class Kernel {
         ~Kernel();
 
       public:
+
+        // Serial only activates if explicitly called, otherwise logs to the screen
         bool initialize_teensy(const std::string &port);
 
+        // CALLBACKS
       private:
+        // Recieve a command from controller
         void cmd_vel_callback(const geometry_msgs::Twist &msg);
+
+        // Utility printer
         void debug_printf(const geometry_msgs::Twist &msg);
 
       private:
+
+        // Handle Teensy Communications
         bool teensy_callback(float lin, float ang);
 
         // Teensy serial handle

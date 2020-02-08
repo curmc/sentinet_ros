@@ -4,7 +4,7 @@
  * @created     : Monday Jan 06, 2020 11:58:36 MST
  */
 
-#include "kermit/math/smath.h"
+#include "kermit/utils/math/smath.h"
 
 static double R_at(const matd_t *R, size_t r, size_t c) {
         return R->data[r * R->ncols + c];
