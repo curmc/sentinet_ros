@@ -61,5 +61,5 @@ class WiiController : public Controller {
                                       to_under(GENERIC_BUTTON::DEBUG)),
                        std::make_pair(UINT16_C(WIIMOTE_BUTTON_TWO),
                                       to_under(GENERIC_BUTTON::ADVANCED))};
-}; // namespace rmt
+};
 } // namespace rmt
