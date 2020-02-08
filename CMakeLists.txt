@@ -87,11 +87,11 @@ add_executable(kernel_simul nodes/simul/cpp/kernel_simul.cpp)
 add_executable(kermit nodes/kermit/kernel.cpp)
 # add_executable(kermit_wii nodes/cpp/kermit/wii_controller.cpp)
 
-# target_link_libraries(localizer_simul ${catkin_LIBRARIES} kermitc kermitcpp)
-target_link_libraries(kernel_simul ${catkin_LIBRARIES} kermitc kermitcpp)
-target_link_libraries(camera_simul ${catkin_LIBRARIES} kermitc kermitcpp)
-target_link_libraries(kermit ${catkin_LIBRARIES} kermitc kermitcpp)
-# target_link_libraries(kermit_wii ${catkin_LIBRARIES} kermitc kermitcpp)
+# target_link_libraries(localizer_simul ${catkin_LIBRARIES} kermitcpp kermitc)
+target_link_libraries(kernel_simul ${catkin_LIBRARIES} kermitcpp kermitc)
+target_link_libraries(camera_simul ${catkin_LIBRARIES} kermitcpp kermitc)
+target_link_libraries(kermit ${catkin_LIBRARIES} kermitcpp kermitc)
+# target_link_libraries(kermit_wii ${catkin_LIBRARIES} kermitcpp kermitc)
 
 
 # INSTALLATION INSTRUCTIONS
