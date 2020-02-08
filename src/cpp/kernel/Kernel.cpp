@@ -8,8 +8,10 @@
 
 Kernel::Kernel(bool debug_, bool simulation_) {
 
+        // New subscriber on cmd vel
         sub = n.subscribe(topics::cmd_vel_topic, 1000,
                           &Kernel::cmd_vel_callback, this);
+
         // pub = n.advertise<kermit::mars_imu>(topics::imu_topic, 1000);
 
         simulation = simulation_;
@@ -160,12 +162,11 @@ Kernel::KermitSimulation::KermitSimulation(ros::NodeHandle &handle,
 Kernel::KermitSimulation::~KermitSimulation() {}
 
 void Kernel::cmd_vel_callback(const geometry_msgs::Twist &msg) {
-        if (debug)
+        if (debug){
                 debug_printf(msg);
+        }
 
-        // float lin = sqrt(msg.linear.x * msg.linear.x + msg.linear.y *
-        // msg.linear.y);
-        float lin = msg.linear.x;
+        float lin = msg.linear.x; 
         float ang = msg.angular.z;
 
         bool status = false;
@@ -175,8 +176,10 @@ void Kernel::cmd_vel_callback(const geometry_msgs::Twist &msg) {
         else
                 status = teensy_callback(lin, ang);
 
-        if (!status)
+        if (!status){
+                std::cout<<"Error. Showing most recent Command State:"<<std::endl;
                 debug_printf(msg);
+        }
 
         return;
 }

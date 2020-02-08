@@ -1,0 +1,3 @@
+<launch>
+        <node pkg="kermit" type="kernel" name="" respawn=true ns="..."\>
+</launch>
