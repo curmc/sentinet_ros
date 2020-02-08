@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(kermit)
 
-# Used for compile database 
+# Used for compile database
 # This can be unset and it wont change anything
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_compile_options(-std=c++17)
@@ -60,7 +60,7 @@ include_directories(
 
 
 # Kermit Library
-# C 
+# C
 add_library(kermitc
   src/c/kernel/serial.c
   src/c/kernel/teensy_msg.c
@@ -77,9 +77,9 @@ add_executable(kernel nodes/kernel.cpp)
 
 target_link_libraries(kernel ${catkin_LIBRARIES} kermitcpp kermitc)
 # target_link_libraries(localizer_simul ${catkin_LIBRARIES} kermitcpp kermitc)
-target_link_libraries(kernel_simul ${catkin_LIBRARIES} kermitcpp kermitc)
-target_link_libraries(camera_simul ${catkin_LIBRARIES} kermitcpp kermitc)
-target_link_libraries(kermit ${catkin_LIBRARIES} kermitcpp kermitc)
+# target_link_libraries(kernel_simul ${catkin_LIBRARIES} kermitcpp kermitc)
+# target_link_libraries(camera_simul ${catkin_LIBRARIES} kermitcpp kermitc)
+# target_link_libraries(kermit ${catkin_LIBRARIES} kermitcpp kermitc)
 # target_link_libraries(kermit_wii ${catkin_LIBRARIES} kermitcpp kermitc)
 
 
