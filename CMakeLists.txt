@@ -72,7 +72,10 @@ add_library(kermitcpp
   src/cpp/kernel/Kernel.cpp
   src/cpp/math/smath.cpp)
 
+add_executable(kernel nodes/kernel.cpp)
 
+
+target_link_libraries(kernel ${catkin_LIBRARIES} kermitcpp kermitc)
 # target_link_libraries(localizer_simul ${catkin_LIBRARIES} kermitcpp kermitc)
 target_link_libraries(kernel_simul ${catkin_LIBRARIES} kermitcpp kermitc)
 target_link_libraries(camera_simul ${catkin_LIBRARIES} kermitcpp kermitc)
