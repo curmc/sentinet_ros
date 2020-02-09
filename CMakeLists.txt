@@ -69,8 +69,8 @@ add_library(kermitc
 
 # C++
 add_library(kermitcpp
-  src/cpp/kernel/Kernel.cpp
-  src/cpp/math/smath.cpp)
+  src/cpp/kernel/Kernel.cpp)
+  # src/cpp/math/smath.cpp)
 
 add_executable(kernel nodes/kernel.cpp)
 
