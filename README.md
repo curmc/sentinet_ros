@@ -22,7 +22,7 @@ This all assumes you're on ubuntu.
 
 ## Installing Dependencies
 ```bash 
-$ sudo apt install cmake make curl libcurl4-gnutls-dev autoconf automake libtool g++ unzip libzmq3-dev libbluetooth-dev
+$ sudo apt install cmake make curl libcurl4-gnutls-dev autoconf automake libtool g++ unzip libbluetooth-dev bluez
 ```
 
 ## Installing ROS
@@ -32,9 +32,10 @@ Recommend 'ros-melodic-desktop-full'
 
 
 ## Building and Installing wiiuse
+
 https://github.com/wiiuse/wiiuse
 ```bash
-$ git checkout https://github.com/wiiuse/wiiuse.git
+$ git clone https://github.com/wiiuse/wiiuse.git
 $ cd wiiuse
 $ mkdir build
 $ cd build
@@ -45,7 +46,7 @@ $ make && sudo make install
 ## Building and Installing apriltag
 https://github.com/AprilRobotics/apriltag
 ```bash
-$ git checkout https://github.com/AprilRobotics/apriltag
+$ git clone https://github.com/AprilRobotics/apriltag
 $ cd apriltag
 $ mkdir build
 $ cd build
