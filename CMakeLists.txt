@@ -18,7 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 # EXTERNAL PACKAGES
-find_package(OpenCV REQUIRED)
+# find_package(OpenCV REQUIRED)
 # find_library(APRIL_TAG apriltag)
 # find_library(WIIMOTE wiiuse)
 
