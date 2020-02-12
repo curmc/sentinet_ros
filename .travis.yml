@@ -83,7 +83,7 @@ before_install:
   - cd wiiuse
   - mkdir build
   - cd build
-  - cmake .. [-DCMAKE_INSTALL_PREFIX=/usr/local] [-DCMAKE_BUILD_TYPE=Release] [-DBUILD_EXAMPLE_SDL=NO]
+  - cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLE_SDL=NO
   - make && sudo make install
   # Install apriltag
   - cd ~
