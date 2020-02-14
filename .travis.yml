@@ -73,6 +73,7 @@ before_install:
   - sudo apt-get update -qq
   - sudo apt-get install dpkg
   - sudo apt-get install -y cmake make curl libcurl4-gnutls-dev autoconf automake libtool g++ unzip libbluetooth-dev bluez python-catkin-pkg python-rosdep python-wstool ros-$ROS_DISTRO-ros-base ros-$ROS_DISTRO-common-msgs
+  - sudo apt-get install ros-$ROS-DISTRO-tf2-geometry-msgs
   - source /opt/ros/$ROS_DISTRO/setup.bash
   # Prepare rosdep to install dependencies.
   - sudo rosdep init
