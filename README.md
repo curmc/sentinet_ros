@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/curmc/sentinet_ros.svg?branch=master)](https://travis-ci.org/curmc/sentinet_ros)
 # Installation
 
 Linux support only at the moment

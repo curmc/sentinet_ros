@@ -14,7 +14,7 @@ TEST(HelloWorld, BasicTest) { ASSERT_EQ(1, 1); }
 
 TEST(KernelTest, InvalidTeensy) {
         Kernel k{};
-        // I feel like this should return false
+        // I feel like this should return false since I'm giving garbage values
         ASSERT_TRUE(k.initialize_teensy("aaaaaa"));
 }
 
