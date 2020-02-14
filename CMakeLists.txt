@@ -47,7 +47,7 @@ generate_messages(
   geometry_msgs
 )
 catkin_package(
-  CATKIN_DEPENDS message_runtime roscpp rospy std_msgs geometry_msgs
+  CATKIN_DEPENDS message_runtime roscpp rospy std_msgs geometry_msgs rosconsole
   )
 
 
@@ -81,6 +81,10 @@ target_link_libraries(kernel ${catkin_LIBRARIES} kermitcpp kermitc)
 # target_link_libraries(camera_simul ${catkin_LIBRARIES} kermitcpp kermitc)
 # target_link_libraries(kermit ${catkin_LIBRARIES} kermitcpp kermitc)
 # target_link_libraries(kermit_wii ${catkin_LIBRARIES} kermitcpp kermitc)
+
+# Unit tests
+catkin_add_gtest(utest test/utest.cpp)
+target_link_libraries(utest ${catkin_LIBRARIES} kermitcpp kermitc)
 
 
 # INSTALLATION INSTRUCTIONS
