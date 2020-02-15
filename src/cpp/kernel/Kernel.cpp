@@ -87,18 +87,18 @@ bool Kernel::KermitSimulation::cmd_vel_callback(float lin, float ang) {
                 double y_pos_ = y_pos + sin(yaw) * veloc * dt;
 
                 // TODO is this necessary?
-                x_pos = (isnan(x_pos) ? x_pos : x_pos_);
-                y_pos = (isnan(y_pos) ? y_pos : y_pos_);
+                x_pos = (std::isnan(x_pos) ? x_pos : x_pos_);
+                y_pos = (std::isnan(y_pos) ? y_pos : y_pos_);
 
         } else {
 
-                assert(!isnan(veloc));
-                assert(!isnan(angular));
+                assert(!std::isnan(veloc));
+                assert(!std::isnan(angular));
 
                 float r = veloc / angular;
 
                 // TODO is this necessary?
-                assert(!isnan(r));
+                assert(!std::isnan(r));
 
                 // Update yaw
                 float yaw_new = yaw + angular * dt;
@@ -108,8 +108,8 @@ bool Kernel::KermitSimulation::cmd_vel_callback(float lin, float ang) {
                 double y_pos_ = y_pos + r * (sin(yaw_new) - sin(yaw));
 
                 // TODO is this necessary?
-                x_pos = (isnan(x_pos) ? x_pos : x_pos_);
-                y_pos = (isnan(y_pos) ? y_pos : y_pos_);
+                x_pos = (std::isnan(x_pos) ? x_pos : x_pos_);
+                y_pos = (std::isnan(y_pos) ? y_pos : y_pos_);
 
                 // Normailze yaw by constraining in [-pi, pi]
                 yaw = angle_normalize(yaw_new);
@@ -162,11 +162,11 @@ Kernel::KermitSimulation::KermitSimulation(ros::NodeHandle &handle,
 Kernel::KermitSimulation::~KermitSimulation() {}
 
 void Kernel::cmd_vel_callback(const geometry_msgs::Twist &msg) {
-        if (debug){
+        if (debug) {
                 debug_printf(msg);
         }
 
-        float lin = msg.linear.x; 
+        float lin = msg.linear.x;
         float ang = msg.angular.z;
 
         bool status = false;
@@ -176,8 +176,9 @@ void Kernel::cmd_vel_callback(const geometry_msgs::Twist &msg) {
         else
                 status = teensy_callback(lin, ang);
 
-        if (!status){
-                std::cout<<"Error. Showing most recent Command State:"<<std::endl;
+        if (!status) {
+                std::cout << "Error. Showing most recent Command State:"
+                          << std::endl;
                 debug_printf(msg);
         }
 
