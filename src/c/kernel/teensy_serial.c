@@ -7,6 +7,27 @@ static teensy_device device;
 static int to_teensy_serialize(to_teensy_msg* msg, teensy_device* dev);
 static int from_teensy_deserialize(from_teensy_msg* msg, teensy_device* dev);
 
+
+void teensy_init() {
+        pthread_mutex_init(&device.r_buffer_lock, NULL);
+        pthread_mutex_init(&device.r_buffer_lock, NULL);
+}
+
+void teensy_cleanup() {
+        pthread_mutex_destroy(&device.r_buffer_lock);
+        pthread_mutex_destroy(&device.r_buffer_lock);
+}
+
+int new_serial_device(serial_dev_attr* attr, const char* serialport) {
+        pthread_mutex_init(&attr->serial_lock, NULL);
+        attr->fd = serialport_init(serialport, 9600);
+        return attr->fd;
+}
+
+int serial_device_cleanup(serial_dev_attr* attr) {
+        return serialport_close(attr->fd); 
+}
+
 serial_status t_send(to_teensy_msg* msg, serial_dev_attr* dev) {
 
         // Serialize the message

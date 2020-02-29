@@ -39,7 +39,14 @@ typedef struct  {
 } teensy_device;
 
 
+void teensy_init();
+void teensy_cleanup();
+
+int new_serial_device(serial_dev_attr* attr, const char* serialport);
+int serial_device_cleanup(serial_dev_attr* attr);
+
 typedef enum {TIMEOUT, NOREAD, FAILURE, SUCCESS} serial_status;
+
 serial_status t_send(to_teensy_msg* msg, serial_dev_attr* dev);
 serial_status t_recieve(from_teensy_msg* msg, serial_dev_attr* dev);
 
