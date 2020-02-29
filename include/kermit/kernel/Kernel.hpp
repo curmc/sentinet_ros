@@ -86,6 +86,7 @@ class Kernel {
               public:
                 KermitSimulation(ros::NodeHandle &hand,
                                  ros::Publisher &imu_pub);
+
                 ~KermitSimulation();
 
                 bool cmd_vel_callback(float lin, float ang);

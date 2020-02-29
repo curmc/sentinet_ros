@@ -1,51 +1,48 @@
-/**
- * @author                        : theo (theo.j.lincke@gmail.com)
- * @file                                : serial
- * @created                 : Wednesday Nov 27, 2019 21:17:31 MST
- */
 
-#ifndef TEENSY_SERIAL_H
 
-#define TEENSY_SERIAL_H
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "teensy_msg.h"
+#include <pthread.h>
 #include "serial.h"
 
-typedef enum { MINING, DRIVING, DUMPING } robot_state;
 
 typedef struct {
+        pthread_mutex_t serial_lock;
         int fd;
-        teensy_packet data;
-        teensy_data_state state;
+} serial_dev_attr;
+
+
+
+#define TO_TEENSY_MSG_SIZE (sizeof(float) * 2 + sizeof(uint16_t) + 3)
+typedef enum { MINING, DRIVING, DUMPING } robot_state;
+typedef struct {
+        uint16_t checksum;
+        float lin, ang;
+        robot_state state;
+} to_teensy_msg;
+
+#define FROM_TEENSY_MSG_SIZE (sizeof(uint8_t) + sizeof(uint16_t))
+typedef struct {
+        uint8_t status_code;
+        uint16_t checksum;
+} from_teensy_msg;
+
+typedef struct  {
+        pthread_mutex_t r_buffer_lock;
+        pthread_mutex_t w_buffer_lock;
+        uint8_t r_buffer[256];
+        uint8_t w_buffer[256];
 } teensy_device;
 
-int new_teensy_device(teensy_device *device, const char *serialport);
-int teensy_cleanup(teensy_device *device);
 
-/*
- * write is the same thing as acting:
- * set, send, recieve
- *
- * I've just added smaller methods so you have access to implimenations
- *
- * In write, checksum is automatically validated with the sent checksum
- * wherease in recieve you provide it yourself
- */
-int teensy_write_drive(teensy_device *device, float lin_accel, float ang_accel);
-int teensy_write_state(teensy_device *device, robot_state state);
-
-int teensy_set_drive(teensy_device *device, float lin_accel, float ang_accel);
-int teensy_set_state(teensy_device *device, robot_state state);
-
-int teensy_send(teensy_device *device);
-int teensy_recieve(teensy_device *device, uint16_t checksum);
+typedef enum {TIMEOUT, NOREAD, FAILURE, SUCCESS} serial_status;
+serial_status t_send(to_teensy_msg* msg, serial_dev_attr* dev);
+serial_status t_recieve(from_teensy_msg* msg, serial_dev_attr* dev);
 
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* end of include guard TEENSY_SERIAL_H */

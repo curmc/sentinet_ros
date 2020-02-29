@@ -12,8 +12,6 @@ Kernel::Kernel(bool debug_, bool simulation_) {
         sub = n.subscribe(topics::cmd_vel_topic, 1000,
                           &Kernel::cmd_vel_callback, this);
 
-        // pub = n.advertise<kermit::mars_imu>(topics::imu_topic, 1000);
-
         simulation = simulation_;
 
         if (simulation) {

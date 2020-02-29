@@ -1,5 +1,6 @@
 #include "kermit/kernel/teensy_serial.h"
 
+
 static int validate_checksum(uint16_t output, uint16_t input) {
         return output == input;
 }
@@ -33,11 +34,13 @@ int teensy_set_drive(teensy_device *dev, float lin, float ang) {
 
                 if (dev->data.cmd.mining || dev->data.cmd.dumping) {
                         printf("WARNING: Teensy state is mining / dumping\n");
+                        dev->state = IDLE;
                         return -1;
                 }
 
                 dev->data.cmd.dumping = 0;
                 dev->data.cmd.mining = 0;
+                dev->data.cmd.driving = 1;
 
                 dev->data.cmd.angular_v = ang;
                 dev->data.cmd.linear_v = lin;
@@ -60,11 +63,13 @@ int teensy_write_drive(teensy_device *dev, float lin, float ang) {
 
                 if (dev->data.cmd.mining || dev->data.cmd.dumping) {
                         printf("WARNING: Teensy state is mining / dumping\n");
+                        dev->state = IDLE;
                         return -1;
                 }
 
                 dev->data.cmd.dumping = 0;
                 dev->data.cmd.mining = 0;
+                dev->data.cmd.driving = 1;
 
                 dev->data.cmd.angular_v = ang;
                 dev->data.cmd.linear_v = lin;
@@ -83,12 +88,11 @@ int teensy_write_drive(teensy_device *dev, float lin, float ang) {
                                               dev->data.cmd.checksum);
 
                 dev->state = IDLE;
+
                 if (!valid) {
                         printf("Teensy Error: Invalid Checksum\n");
                         return -1;
                 }
-
-                dev->state = IDLE;
 
                 return ret;
         }

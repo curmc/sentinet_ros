@@ -8,6 +8,7 @@
 
 static uint16_t generate_checksum() { return rand() % 100000; }
 
+
 /*
  Creates a new teensy packet for data
  Really just wipes data in the packet, so can also be used
@@ -17,7 +18,9 @@ int new_teensy_packet(teensy_packet *packet, int auto_checksum) {
         if (packet->state == BUSY) {
                 return -1;
         } else if (packet->state == IDLE) {
+
                 packet->state = BUSY;
+
                 memset(packet, 0, sizeof(teensy_packet));
                 packet->state = BUSY;
 
@@ -43,6 +46,7 @@ int teensy_serialize(teensy_packet *cmd) {
         }
 
         else if (cmd->state == IDLE) {
+
                 cmd->state = BUSY;
 
                 if (cmd->cmd.auto_checksum)
@@ -63,6 +67,7 @@ int teensy_serialize(teensy_packet *cmd) {
                 *vals++ = cmd->cmd.angular_v;
 
                 cmd->state = IDLE;
+
                 return 1;
         }
 
