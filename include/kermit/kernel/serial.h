@@ -4,9 +4,7 @@
  * @created     : Wednesday Nov 27, 2019 21:17:31 MST
  */
 
-#ifndef SERIAL_C_H
-
-#define SERIAL_C_H
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,4 +41,3 @@ int serialport_flush(int fd);
 }
 #endif
 
-#endif /* end of include guard SERIAL_H */

@@ -6,23 +6,15 @@
 
 #include "kermit/kernel/Kernel.hpp"
 
-Kernel::Kernel(bool debug_, bool simulation_) {
+Kernel::Kernel() {
 
         // New subscriber on cmd vel
         sub = n.subscribe(topics::cmd_vel_topic, 1000,
                           &Kernel::cmd_vel_callback, this);
 
-        simulation = simulation_;
-
-        if (simulation) {
-                simul_state = std::unique_ptr<KermitSimulation>(
-                    new KermitSimulation(n, pub));
-        }
-
-        debug = debug_;
 }
 
-Kernel::~Kernel() { teensy_cleanup(&dev); }
+Kernel::~Kernel() { }
 
 bool Kernel::initialize_teensy(const std::string &port) {
 

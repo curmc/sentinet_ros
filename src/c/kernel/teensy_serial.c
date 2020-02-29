@@ -1,224 +1,131 @@
 #include "kermit/kernel/teensy_serial.h"
+#include <stdlib.h>
 
+static uint16_t generate_checksum() { return rand() % 100000; }
 
-static int validate_checksum(uint16_t output, uint16_t input) {
-        return output == input;
-}
+static teensy_device device;
+static int to_teensy_serialize(to_teensy_msg* msg, teensy_device* dev);
+static int from_teensy_deserialize(from_teensy_msg* msg, teensy_device* dev);
 
-/*
- Creates a new teensy device equiped with handler and data
- */
-int new_teensy_device(teensy_device *device, const char *serialport) {
-        if (device->state == BUSY) {
-                return -1;
-        } else if (device->state == IDLE) {
+serial_status t_send(to_teensy_msg* msg, serial_dev_attr* dev) {
 
-                device->state = BUSY;
-
-                memset(device, 0, sizeof(teensy_device));
-                device->fd = serialport_init(serialport, 9600);
-
-                device->state = IDLE;
-
-                return device->fd;
+        // Serialize the message
+        if(!to_teensy_serialize(msg, &device)) {
+                return FAILURE;
         }
-        return -1;
+        
+        // Write data
+        pthread_mutex_lock(&dev->serial_lock);
+        int ret = serialport_write(dev->fd, device.w_buffer, TO_TEENSY_MSG_SIZE);
+        pthread_mutex_unlock(&dev->serial_lock);
+
+        // serialport write returns -1 on failure else 0
+        if(ret < 0)
+                return SUCCESS;
+
+        return FAILURE;
 }
 
-// Sets the drive values in a teensy device - doesn't write to port
-int teensy_set_drive(teensy_device *dev, float lin, float ang) {
-        if (dev->state == BUSY) {
-                return -1;
-        } else if (dev->state == IDLE) {
-                dev->state = BUSY;
+serial_status t_recieve(from_teensy_msg* msg, serial_dev_attr* dev) {
 
-                if (dev->data.cmd.mining || dev->data.cmd.dumping) {
-                        printf("WARNING: Teensy state is mining / dumping\n");
-                        dev->state = IDLE;
-                        return -1;
+        // Read from the device
+        pthread_mutex_lock(&dev->serial_lock);
+        int ret = serialport_read(dev->fd, device.r_buffer, TO_TEENSY_MSG_SIZE, 100);
+        pthread_mutex_unlock(&dev->serial_lock);
+
+
+        // Serialport read returns 0 on success, else -1 or -2
+        if(ret == -2)
+                return TIMEOUT;
+
+        if(ret == -1)
+                return NOREAD;
+
+        if(ret == 0){
+                if(!from_teensy_deserialize(msg, &device)) {
+                        return FAILURE;
                 }
-
-                dev->data.cmd.dumping = 0;
-                dev->data.cmd.mining = 0;
-                dev->data.cmd.driving = 1;
-
-                dev->data.cmd.angular_v = ang;
-                dev->data.cmd.linear_v = lin;
-
-                dev->state = IDLE;
-
-                return 1;
+                return SUCCESS;
         }
-        return -1;
+
+        return FAILURE;
 }
 
-/*
- Write to serial port macro for teensy drive train
- */
-int teensy_write_drive(teensy_device *dev, float lin, float ang) {
-        if (dev->state == BUSY) {
-                return -1;
-        } else if (dev->state == IDLE) {
-                dev->state = BUSY;
+static int to_teensy_serialize(to_teensy_msg* msg, teensy_device* dev) {
+        pthread_mutex_lock(&dev->w_buffer_lock);
 
-                if (dev->data.cmd.mining || dev->data.cmd.dumping) {
-                        printf("WARNING: Teensy state is mining / dumping\n");
-                        dev->state = IDLE;
-                        return -1;
-                }
+        uint16_t* checksum = (uint16_t*)dev->w_buffer;
+        *checksum++ = msg->checksum;
 
-                dev->data.cmd.dumping = 0;
-                dev->data.cmd.mining = 0;
-                dev->data.cmd.driving = 1;
-
-                dev->data.cmd.angular_v = ang;
-                dev->data.cmd.linear_v = lin;
-
-                teensy_serialize(&dev->data);
-
-                int ret = serialport_write(dev->fd, dev->data.cmd.buffer,
-                                           CMD_VEL_BUFFER_SIZE);
-
-                ret = serialport_read(dev->fd, dev->data.resp.buffer,
-                                      TEENSY_BUFFER_SIZE, 100);
-
-                teensy_deserialize(&dev->data, dev->data.resp.buffer);
-
-                int valid = validate_checksum(dev->data.resp.checksum,
-                                              dev->data.cmd.checksum);
-
-                dev->state = IDLE;
-
-                if (!valid) {
-                        printf("Teensy Error: Invalid Checksum\n");
-                        return -1;
-                }
-
-                return ret;
+        uint8_t* state = (uint8_t*)checksum;
+        switch(msg->state) {
+                case DRIVING:
+                        *state++ = 1;
+                        break;
+                case DUMPING:
+                        *state++ = 2;
+                        break;
+                case MINING:
+                        *state++ = 3;
+                        break;
+                default:
+                        *state++ = 0;
+                        break;
         }
-        return -1;
+
+        float* vals = (float*)state;
+        *vals++ = msg->lin;
+        *vals++ = msg->ang;
+
+        pthread_mutex_unlock(&dev->w_buffer_lock);
+        return 1;
 }
 
-/*
- Write to serial port macro for teensy state
- */
-int teensy_set_state(teensy_device *dev, robot_state state) {
-        if (dev->state == BUSY) {
-                return -1;
-        } else if (dev->state == IDLE) {
-                dev->state = BUSY;
-                if (state == DRIVING) {
-                        dev->data.cmd.driving = 1;
-                        dev->data.cmd.dumping = 0;
-                        dev->data.cmd.mining = 0;
-                }
 
-                else if (state == MINING || state == DUMPING) {
-                        dev->data.cmd.driving = 0;
-                        dev->data.cmd.linear_v = 0.0;
-                        dev->data.cmd.angular_v = 0.0;
-                        dev->data.cmd.mining = (state == MINING ? 1 : 0);
-                        dev->data.cmd.dumping = (state == DUMPING ? 1 : 0);
-                }
+static int from_teensy_deserialize(from_teensy_msg* msg, teensy_device* dev) {
+        
+        pthread_mutex_lock(&dev->r_buffer_lock);
 
-                dev->state = IDLE;
+        uint16_t* handle = (uint16_t*)dev->r_buffer;
+        msg->checksum = *handle++;
 
-                return 1;
-        }
-        return -1;
+        uint8_t* status = (uint8_t*)handle;
+        msg->status_code = *status++;
+        return 1; 
 }
 
-/*
- Write to serial port macro for teensy state
- */
-int teensy_write_state(teensy_device *dev, robot_state state) {
-        if (dev->state == BUSY) {
-                return -1;
-        } else if (dev->state == IDLE) {
-                dev->state = BUSY;
-                if (state == DRIVING) {
-                        dev->data.cmd.driving = 1;
-                        dev->data.cmd.dumping = 0;
-                        dev->data.cmd.mining = 0;
-                }
 
-                else if (state == MINING || state == DUMPING) {
-                        dev->data.cmd.driving = 0;
-                        dev->data.cmd.linear_v = 0.0;
-                        dev->data.cmd.angular_v = 0.0;
-                        dev->data.cmd.mining = (state == MINING ? 1 : 0);
-                        dev->data.cmd.dumping = (state == DUMPING ? 1 : 0);
-                }
 
-                teensy_serialize(&dev->data);
 
-                int ret = serialport_write(dev->fd, dev->data.cmd.buffer,
-                                           CMD_VEL_BUFFER_SIZE);
 
-                ret = serialport_read(dev->fd, dev->data.resp.buffer,
-                                      TEENSY_BUFFER_SIZE, 100);
 
-                teensy_deserialize(&dev->data, dev->data.resp.buffer);
 
-                int valid = validate_checksum(dev->data.resp.checksum,
-                                              dev->data.cmd.checksum);
 
-                dev->state = IDLE;
-                if (!valid) {
-                        printf("Teensy Error: Invalid Checksum\n");
-                        return -1;
-                }
 
-                return ret;
-        }
-        return -1;
-}
 
-int teensy_send(teensy_device *dev) {
 
-        if (dev->state == BUSY) {
-                return -1;
-        } else if (dev->state == IDLE) {
-                dev->state = BUSY;
-                teensy_serialize(&dev->data);
-                int ret = serialport_write(dev->fd, dev->data.cmd.buffer,
-                                           CMD_VEL_BUFFER_SIZE);
-                dev->state = IDLE;
-                return ret;
-        }
-        return -1;
-}
 
-int teensy_recieve(teensy_device *dev, uint16_t checksum) {
 
-        if (dev->state == BUSY) {
-                return -1;
-        } else if (dev->state == IDLE) {
-                dev->state = BUSY;
-                int ret = serialport_read(dev->fd, dev->data.resp.buffer,
-                                          TEENSY_BUFFER_SIZE, 100);
 
-                teensy_deserialize(&dev->data, dev->data.resp.buffer);
 
-                int valid =
-                    validate_checksum(dev->data.resp.checksum, checksum);
 
-                dev->state = IDLE;
-                if (!valid) {
-                        printf("Teensy Error: Invalid Checksum\n");
-                        return -1;
-                }
 
-                dev->state = IDLE;
 
-                return ret;
-        }
-        return -1;
-}
 
-/*
- Clean teensy state up
- */
-int teensy_cleanup(teensy_device *device) {
-        return serialport_close(device->fd);
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
