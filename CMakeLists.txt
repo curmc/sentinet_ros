@@ -63,7 +63,6 @@ include_directories(
 # C
 add_library(kermitc
   src/c/kernel/serial.c
-  src/c/kernel/teensy_msg.c
   src/c/kernel/teensy_serial.c)
 
 

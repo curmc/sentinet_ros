@@ -10,7 +10,7 @@ int main(int argc, char **argv) {
 
         ros::init(argc, argv, "Kernel");
 
-        Kernel kernel(true, false);
+        Kernel kernel;
         kernel.initialize_teensy("/dev/ttyACM0");
 
         ros::spin();
